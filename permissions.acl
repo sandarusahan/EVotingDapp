@@ -27,3 +27,11 @@ rule NetworkAdminSystem {
     resource: "org.hyperledger.composer.system.**"
     action: ALLOW
 }
+
+rule AllParticipantsHaveAccessToAllResources {
+  description: "Allow all participants to have access to all resources and make transactions"
+  participant: "ANY"
+  operation: ALL
+  resource: "org.evotedapp.biznet.*"
+  action: ALLOW
+}
