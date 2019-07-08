@@ -3,7 +3,7 @@
     "composer": "^0.20.7"
   },
   "name": "e-voting-dapp-network",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "A Hyperledger Fabric network to introduce blockchain powered e-voting system for Sri Lankan citizens to use their vote at less struggle",
   "scripts": {
     "prepublish": "mkdirp ./dist && composer archive create --sourceType dir --sourceName . -a ./dist/e-voting-dapp-network.bna",

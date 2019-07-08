@@ -18,121 +18,87 @@
 
 namespace org.evotedapp.biznet
 
-abstract participant User {
-  o String name
-  o String nic
-  o String email
-  o String password // sanitize and encrypt 
-  o Integer mobileNumber
-} 
-
-transaction changePassword {
-  --> User user
-  o String newPass
-}
-
-event changePasswordNotification {
-  --> User user
-}
-
-
-participant Admin identified by adminId extends Voter {
-  o String adminId
-  o Boolean hasVerified default = false
-}
-
-transaction verifyAdmin {
-  --> Admin admin
-}
-
-event verifyAdminNotification {
-  --> Admin admin
-}
-
-
-
-
-participant Voter identified by voterId extends User{
-  o String voterId
-  --> PollingStation pollingStation
-  o Boolean isEligible default = true
-  --> Election[] votedElections
-  o Boolean hasVoted default = false
-}
-
-transaction verifyEligibility {
-  --> Voter voter
-}
-
-event verifyEligibilityNotification {
-  --> Voter voter
-}
-
-
-transaction verifyHasVoted {
-  --> Voter voter
-  --> Election currentElection
-}
-
-event verifyHasVotedNotification {
-  --> Voter voter
-}
-
-transaction addVotedElection {
-  --> Voter voter
-  --> Election newElection
-}
-
-event addVotedElectionNotification {
-  --> Voter voter
-}
-
-participant Politician identified by politicianId extends Voter{
-  o String politicianId
-  --> Party party
-  o String role
-  o Integer officeContact
-  o String officeAddress
-  --> Division electoralDivision
-  o String bio
-  o Boolean hasVerified default = false
-}
-
-transaction changeRole {
-  --> Voter voter
-}
-
-event changeRoleNotification {
-  --> Voter voter
-}
-
-
-transaction verifyPolitician {
-  --> Politician politician
-}
-
-event verifyPoliticianNotification {
-  --> Politician politician
-}
-
-asset PreferencialVoteNumber identified by preferencialVoteNumberId {
-  o String preferencialVoteNumberId
-  --> Election election
-  o Integer preferentialVoteNumber
-  --> Party party
-  --> Politician politician
-  --> Division division
-}
 asset Election identified by electionId {
   o String electionId
   o String name
-  o String type
-  o DateTime startDateTime
-  o DateTime endDateTime
-  --> Party[] parties
+  o DateTime electionDate
+  o DateTime startTime
+  o DateTime endTime
+  o ElectionStatus electionStatus default = "New"
+  --> ElectionCommissioner commissioner
+  --> Party[] parties optional
   --> Politician[] candidates
-  --> Voter[] ineligibleVoters
 
+}
+
+transaction NewElectionTransaction {
+  o String electionId
+  o String name
+  o DateTime electionDate
+  o DateTime startTime
+  o DateTime endTime
+  --> Politician[] candidates
+  // --> Party[] parties
+  --> ElectionCommissioner commissioner
+
+}
+
+event NewElectionNotification {
+  --> Election election
+}
+
+enum ElectionStatus {
+  o New
+  o Created
+  o Voting_Started
+  o Voting_Ended
+  o Pending_Results
+  o Finished
+}
+
+participant ElectionCommissioner identified by electionCommissionerId {
+  o String electionCommissionerId
+  o String commissionerName
+  o Boolean authorized
+}
+
+participant PollingStation identified by pollingStationId {
+  o String pollingStationId
+  o String name
+  o String address
+  o Integer registeredVoters
+  --> Division electoralDivision
+}
+
+asset Ballot identified by ballotId {
+  o String ballotId
+  --> Party votedParty optional
+  --> Politician votedCandidate
+  --> PollingStation pollingStation
+  --> Election election
+  o BallotStatus balStatus default = 'New'
+}
+
+transaction VoteTransaction {
+  o String ballotId
+  --> Politician votedCandidate
+  --> PollingStation votedPolingStation
+  --> Election election
+}
+
+event VoteNotification {
+  --> Ballot ballot
+}
+
+asset Politician identified by politicianId{
+  o String politicianId
+  o String name
+  --> Party party
+  o String role
+  o String officeContact
+  o String officeAddress
+  --> Division electoralDivision
+  o String bio
 }
 
 asset VoteCountParty identified by voteCountPartyId {
@@ -149,16 +115,6 @@ asset VoteCountCandidate identified by voteCountCandidateId {
   o Integer voteCount
 }
 
-asset Ballot identified by ballotId {
-  o String ballotId
-  // --> Voter voter
-  // --> Party votedParty
-  // --> Politician[] votedCandidates
-  o String votedParty // Encrypted
-  o String votedCandidates // Encrypted
-  o DateTime timeStamp
-  o BallotStatus balStatus default="New"
-}
 
 asset Party identified by partyId {
   o String partyId
@@ -172,12 +128,7 @@ asset Party identified by partyId {
   o String description
 }
 
-asset PollingStation identified by pollingStationId {
-  o String pollingStationId
-  o String name
-  o String location
-  --> Division electoralDivision
-}
+
 
 asset Division identified by divisionId {
   o String divisionId
@@ -188,16 +139,22 @@ asset Division identified by divisionId {
 
 enum BallotStatus {
   o New
-  o Encrypted
   o Casted
+  o Rejected
   o Counted
 }
 
-transaction VoteTransaction {
-  --> Ballot ballot
-  --> Voter voter
-}
 
-event VoteNotification {
-  --> Ballot ballot
-}
+
+
+
+
+
+// asset PreferencialVoteNumber identified by preferencialVoteNumberId {
+//   o String preferencialVoteNumberId
+//   --> Election election
+//   o Integer preferentialVoteNumber
+//   --> Party party
+//   --> Politician politician
+//   --> Division division
+// }
