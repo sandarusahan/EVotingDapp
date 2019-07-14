@@ -25,10 +25,9 @@ asset Election identified by electionId {
   o DateTime startTime
   o DateTime endTime
   o ElectionStatus electionStatus default = "New"
-  --> ElectionCommissioner commissioner
+  --> ElectionCommissioner commissioner optional
   --> Party[] parties optional
   --> Politician[] candidates
-
 }
 
 transaction NewElectionTransaction {
@@ -39,14 +38,27 @@ transaction NewElectionTransaction {
   o DateTime endTime
   --> Politician[] candidates
   // --> Party[] parties
-  --> ElectionCommissioner commissioner
-
+  --> ElectionCommissioner commissioner optional
 }
-
 event NewElectionNotification {
   --> Election election
 }
 
+transaction StartVotingTransaction {
+  o String currentElectionId
+}
+
+event StartVotingNotification {
+  --> Election election
+}
+
+transaction EndVotingTransaction {
+  o String currentElectionId
+}
+
+event EndVotingNotification {
+  --> Election election
+}
 enum ElectionStatus {
   o New
   o Created
@@ -93,7 +105,8 @@ event VoteNotification {
 asset Politician identified by politicianId{
   o String politicianId
   o String name
-  --> Party party
+  o String party
+  o String image
   o String role
   o String officeContact
   o String officeAddress
