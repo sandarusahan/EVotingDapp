@@ -102,6 +102,19 @@ event VoteNotification {
   --> Ballot ballot
 }
 
+transaction GenerateElectionResult {
+  o String voteCountCandidateId
+  o Integer rejectedVotes
+  o Integer declaredVotes
+  o Integer allVotes
+  o String electionId
+  o String candidateId
+  o Integer candidateVotes
+}
+
+event GenerateElectionResultNotification {
+  o VoteCountCandidate voteCountCandidate
+}
 asset Politician identified by politicianId{
   o String politicianId
   o String name
@@ -123,11 +136,13 @@ asset VoteCountParty identified by voteCountPartyId {
 
 asset VoteCountCandidate identified by voteCountCandidateId {
   o String voteCountCandidateId
-  --> Election election
-  --> Politician candidate
-  o Integer voteCount
+  o String electionId
+  o Integer rejectedVotes
+  o Integer declaredVotes
+  o Integer allVotes optional
+  o String candidateId
+  o Integer candidateVotes 
 }
-
 
 asset Party identified by partyId {
   o String partyId

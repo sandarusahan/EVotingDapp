@@ -1,0 +1,56 @@
+query getBallotsByElection {
+    
+    description: "Select all ballots by election"
+    statement:
+        SELECT org.evotedapp.biznet.Ballot
+            WHERE (election == _$election)
+}
+
+query getBallotsByElectionAndCandidate {
+    
+    description: "Select all ballots by election & candidate"
+    statement:
+        SELECT org.evotedapp.biznet.Ballot
+            WHERE (election == _$election AND votedCandidate == _$candidate)
+}
+
+query getResultByElectionAndCandidate {
+    
+    description: "Select result by election and candidate"
+    statement:
+        SELECT org.evotedapp.biznet.VoteCountCandidate
+            WHERE (electionId == _$electionId AND candidateId == _$candidateId)
+}
+
+query getBallotByElectionAndCandidateAndPollingStaion {
+    
+    description: "Select ballots by election and candidate and polling station"
+    statement:
+        SELECT org.evotedapp.biznet.Ballot
+            WHERE (election == _$election AND votedCandidate == _$candidate AND pollingStation == _$pollingStation)
+}
+
+query getPollingStationByDivision{
+    
+    description: "Select poling station by division"
+    statement:
+        SELECT org.evotedapp.biznet.PollingStation
+            WHERE (electoralDivision == _$division)
+}
+
+query getDivisionByDistrict{
+    
+    description: "Select division by district"
+    statement:
+        SELECT org.evotedapp.biznet.Division
+            WHERE (district == _$district)
+}
+
+query getDivisionByProvince{
+    
+    description: "Select division by province"
+    statement:
+        SELECT org.evotedapp.biznet.Division
+            WHERE (province == _$province)
+}
+
