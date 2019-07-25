@@ -1,3 +1,12 @@
+query getBallotsVerifyKeyByElectionAndPollingStation {
+    
+    description: "Select all ballots keys by election"
+    statement:
+        SELECT org.evotedapp.biznet.ballotKeyVerify
+            WHERE (election == _$election AND pollingStation == _$pollingStation)
+}
+
+
 query getBallotsByElection {
     
     description: "Select all ballots by election"

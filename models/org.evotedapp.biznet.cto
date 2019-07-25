@@ -44,6 +44,13 @@ event NewElectionNotification {
   --> Election election
 }
 
+asset ballotKeyVerify identified by ballotKeyVerifyId {
+  o String ballotKeyVerifyId
+  --> Election election
+  --> PollingStation pollingStation
+  o String votedKey
+}
+
 transaction StartVotingTransaction {
   o String currentElectionId
 }
@@ -80,7 +87,10 @@ participant PollingStation identified by pollingStationId {
   o String address
   o Integer registeredVoters
   --> Division electoralDivision
+  o String[] voteKeys
+  o String password
 }
+
 
 asset Ballot identified by ballotId {
   o String ballotId
@@ -118,6 +128,7 @@ event GenerateElectionResultNotification {
 asset Politician identified by politicianId{
   o String politicianId
   o String name
+  o String nic
   o String party
   o String image
   o String role
